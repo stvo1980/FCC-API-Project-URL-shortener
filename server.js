@@ -29,6 +29,7 @@ var urlSchema = new Schema({
   updatedAt: { type: Date, default: Date.now }
    
   });
+
 var ShortURL = mongoose.model('shortUrl', urlSchema);
 
 
