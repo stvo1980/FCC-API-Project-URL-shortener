@@ -13,7 +13,7 @@ var port = process.env.PORT || 3000;
 
 /** this project needs a db !! **/ 
 // mongoose.connect(process.env.DB_URI);
-
+mongoose.connect(process.env.MONGO_URI); 
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
