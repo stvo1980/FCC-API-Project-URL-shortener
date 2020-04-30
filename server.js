@@ -5,7 +5,7 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser')
 var cors = require('cors');
-
+var validator = require('validator')
 var app = express();
 
 // Basic Configuration 
@@ -21,16 +21,15 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}))
 
 var Schema=mongoose.Schema;
-var urlSchema = new Schema({
-    originalUrl: String, 
-    urlCode: String,
-    shortUrl : String,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-   
-  });
 
-var shortURL = mongoose.model('shortUrl', urlSchema);
+const shortUrlSchema = new Schema({
+  url: {
+    type: String,
+    required: true
+  }
+})
+
+var ShortURL = mongoose.model('shortUrl', shortUrlSchema);
 //with this video to get url https://www.youtube.com/watch?v=5T1YDRWaa3k
 app.get("/new/:urlToShort(*)",function(req,res,next){
         var urlToShort=req.params.urlToShort;  
@@ -38,11 +37,25 @@ app.get("/new/:urlToShort(*)",function(req,res,next){
   console.log(urlToShort)
         })
 
-const createUrl = (newURL, done) => {
+const createAndSaveURL = (newURL, done) => {
   const shortUrl = new ShortURL({
     url: newURL
   })
   shortUrl.save((err, data) => {
+    if(err) return done(err)
+    return done(null, data)
+  })
+}
+
+const findOneByURL = (newURL, done) => {
+  ShortURL.findOne({url: newURL}, (err, data) => {
+    if(err) return done(err)
+    return done(null, data)
+  })
+}
+
+const findURLByShortURL = (shortURL, done) => {
+  ShortURL.findById(shortURL, (err, data) => {
     if(err) return done(err)
     return done(null, data)
   })
@@ -62,6 +75,33 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.post("/api/shorturl/new", function (req, res) {
+  const newURL = req.body.url
+  
+  if (validator.isURL(newURL)) {
+    findOneByURL(newURL, (err, data) => {
+      data
+        ? res.json({
+            original_url: data.url,
+            short_url: data._id
+          })
+        : createAndSaveURL(newURL, (err, data) => {
+            res.json({
+              original_url: newURL,
+              short_url: data._id
+            })
+          })
+    })
+  } else {
+    res.json({error: 'invalid URL'})
+  }
+});
+
+app.get('/api/shorturl/:shorturl', (req, res) => {
+  findURLByShortURL(req.params.shorturl, (err, data) => {
+    res.redirect(data.url)
+  })
+})
 
 
 
