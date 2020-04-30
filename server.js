@@ -35,10 +35,18 @@ var shortURL = mongoose.model('shortUrl', urlSchema);
 app.get("/new/:urlToShort(*)",function(req,res,next){
         var urlToShort=req.params.urlToShort;  
   return res.json({urlToShort})
-  
+  console.log(urlToShort)
         })
 
-
+const createUrl = (newURL, done) => {
+  const shortUrl = new ShortURL({
+    url: newURL
+  })
+  shortUrl.save((err, data) => {
+    if(err) return done(err)
+    return done(null, data)
+  })
+}
 
 
 
