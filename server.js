@@ -7,13 +7,16 @@ var bodyParser = require('body-parser')
 var cors = require('cors');
 var validator = require('validator')
 var app = express();
-
+//this is from here 
+var autoIncrement = require('mongoose-auto-increment');
 // Basic Configuration 
 var port = process.env.PORT || 3000;
 
 /** this project needs a db !! **/ 
 // mongoose.connect(process.env.DB_URI);
-mongoose.connect(process.env.MONGO_URI); 
+//see here autoincrement package https://www.npmjs.com/package/mongoose-auto-increment
+var connection = mongoose.createConnection(process.env.MONGO_URI); 
+autoIncrement.initialize(connection);
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
@@ -22,24 +25,24 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 var Schema=mongoose.Schema;
 
-const shortUrlSchema = new Schema({
+var shortUrlSchema = new Schema({
   url: {
     type: String,
     required: true
   }
 })
 
-var ShortURL = mongoose.model('shortUrl', shortUrlSchema);
+var shortUrl = mongoose.model('shortUrl', shortUrlSchema);
 //with this video to get url https://www.youtube.com/watch?v=5T1YDRWaa3k
 app.get("/new/:urlToShort(*)",function(req,res,next){
         var urlToShort=req.params.urlToShort;  
   return res.json({urlToShort})
   console.log(urlToShort)
         })
-
-const createAndSaveURL = (newURL, done) => {
-  const shortUrl = new ShortURL({
-    url: newURL
+// go ahead
+const createAndSaveUrl = (newUrl, done) => {
+  const shortUrl = new shortUrl({
+    url: newUrl
   })
   shortUrl.save((err, data) => {
     if(err) return done(err)
@@ -47,15 +50,15 @@ const createAndSaveURL = (newURL, done) => {
   })
 }
 
-const findOneByURL = (newURL, done) => {
-  ShortURL.findOne({url: newURL}, (err, data) => {
+const findOneByUrl = (newUrl, done) => {
+  shortUrl.findOne({url: newUrl}, (err, data) => {
     if(err) return done(err)
     return done(null, data)
   })
 }
 
-const findURLByShortURL = (shortURL, done) => {
-  ShortURL.findById(shortURL, (err, data) => {
+const findURLByShortURL = (shortUrl, done) => {
+  shortUrl.findById(shortUrl, (err, data) => {
     if(err) return done(err)
     return done(null, data)
   })
@@ -76,18 +79,18 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.post("/api/shorturl/new", function (req, res) {
-  const newURL = req.body.url
+  const newUrl = req.body.url
   
-  if (validator.isURL(newURL)) {
-    findOneByURL(newURL, (err, data) => {
+  if (validator.isURL(newUrl)) {
+    findOneByUrl(newUrl, (err, data) => {
       data
         ? res.json({
             original_url: data.url,
             short_url: data._id
           })
-        : createAndSaveURL(newURL, (err, data) => {
+        : createAndSaveUrl(newUrl, (err, data) => {
             res.json({
-              original_url: newURL,
+              original_url: newUrl,
               short_url: data._id
             })
           })
