@@ -33,8 +33,9 @@ var urlSchema = new Schema({
 var shortURL = mongoose.model('shortUrl', urlSchema);
 //with this video to get url https://www.youtube.com/watch?v=5T1YDRWaa3k
 app.get("/new/:urlToShort(*)",function(req,res,next){
-        var {urlToShort}=req.params;  
-  return res.json({urlToShor})
+        var urlToShort=req.params.urlToShort;  
+  return res.json({urlToShort})
+  
         })
 
 
