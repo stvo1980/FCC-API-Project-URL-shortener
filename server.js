@@ -3,7 +3,7 @@
 var express = require('express');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
-
+var bodyParser = require('body-parser')
 var cors = require('cors');
 
 var app = express();
@@ -18,6 +18,7 @@ app.use(cors());
 
 /** this project needs to parse POST bodies **/
 // you should mount the body-parser here
+app.use(bodyParser.urlencoded({extended: false}))
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -30,6 +31,18 @@ app.get('/', function(req, res){
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
+
+const Schema=mongoose.Schema;
+var urlSchema = new Schema({
+    originalUrl: String, 
+    urlCode: String,
+    shortUrl : String,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+   
+  });
+
+
 
 
 app.listen(port, function () {
