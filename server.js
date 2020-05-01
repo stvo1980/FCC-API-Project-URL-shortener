@@ -34,25 +34,23 @@ var shortUrlSchema = new Schema({
   }
 })
 
-var shortUrl = mongoose.model('shortUrl', shortUrlSchema);
+//var shortUrl = mongoose.model('shortUrl', shortUrlSchema);
 
 
  
-//shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUrl');
 
-//var shortUrl = connection.model('shortUrl', shortUrlSchema)
+
+
 shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
 var shortUrl = connection.model('shortUrl', shortUrlSchema);
 
-shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl')
+//shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl')
 
 //const shortUrl = connection.model('shortUrl', shortUrlSchema)
 
 
-//with this video to get url https://www.youtube.com/watch?v=5T1YDRWaa3k
-
 // go ahead
-const createAndSaveUrl = (newUrl, done) => {
+const createUrl = function(newUrl, done){
   const shortUrl = new shortUrl({
     url: newUrl
   })
@@ -62,7 +60,7 @@ const createAndSaveUrl = (newUrl, done) => {
   })
 }
 
-const findOneByUrl = (newUrl, done) => {
+const findOneByUrl = function(newUrl, done) => {
   shortUrl.findOne({url: newUrl}, (err, data) => {
     if(err) return done(err)
     return done(null, data)
@@ -100,7 +98,7 @@ app.post("/api/shorturl/new", function (req, res) {
             original_url: data.url,
             short_url: data._id
           })
-        : createAndSaveUrl(newUrl, (err, data) => {
+        : createUrl(newUrl, (err, data) => {
             res.json({
               original_url: newUrl,
               short_url: data._id
