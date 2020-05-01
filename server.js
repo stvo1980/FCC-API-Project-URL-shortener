@@ -38,16 +38,25 @@ var shortUrlSchema = new Schema({
   }
 })
 //this for id package
-shortUrlSchema.plugin(autoIncrement.plugin, 'ShortURL')
+//shortUrlSchema.plugin(autoIncrement.plugin, 'ShortURL')
 
-var shortUrl = connection.model('shortUrl', shortUrlSchema)
 
-var createAndSaveURL = function(newUrl, done) {
+
+shortUrlSchema.plugin(autoIncrement.plugin, {
+    model: 'shortUrl',
+//   field: 'Id',
+    startAt: 100,
+    incrementBy: 100
+});
+
+var shortUrl = connection.model('shortUrl', shortUrlSchema);
+
+var createAndSaveUrl = function(newUrl, done) {
   var entryUrl = new shortUrl({
     url: newUrl})
    .save(function (err, data) {
-    if(err) return done(err)
-    return done(null, data)
+      if(err) return done(err)
+      return done(null, data)
   })
 }
 
@@ -75,7 +84,7 @@ app.get('/', function(req, res){
 // your first API endpoint... 
 app.post("/api/shorturl/new", function (req, res) {
   var newUrl = req.body.url
-  
+  //see validUrl variable
   if (validUrl.isUri(newUrl)) {
     findOneByUrl(newUrl, function(err, data)  {
       if(data) {
@@ -84,7 +93,7 @@ app.post("/api/shorturl/new", function (req, res) {
             short_url: data._id
           })
       } else {
-        createAndSaveURL(newUrl, function (err, data) {
+        createAndSaveUrl(newUrl, function (err, data) {
             res.json({
               original_url: newUrl,
               short_url: data._id
