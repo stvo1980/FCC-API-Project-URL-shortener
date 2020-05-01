@@ -16,9 +16,9 @@ var port = process.env.PORT || 3000;
 /** this project needs a db !! **/ 
 // mongoose.connect(process.env.DB_URI);
 //connect with id incrementor
-//var connection = mongoose.createConnection(process.env.MONGO_URI);
-//autoIncrement.initialize(connection);
-mongoose.connect(process.env.MONGO_URI); 
+var connection = mongoose.createConnection(process.env.MONGO_URI);
+autoIncrement.initialize(connection);
+//mongoose.connect(process.env.MONGO_URI); 
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
@@ -38,13 +38,13 @@ var shortUrl = mongoose.model('shortUrl', shortUrlSchema);
 
 
  
-//shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUrl');
+shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUrl');
 
-//var shortUrl = connection.model('shortUrl', shortUrlSchema)
-//shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
-//var shortUrl = connection.model('shortUrl', shortUrlSchema);
+var shortUrl = connection.model('shortUrl', shortUrlSchema)
+shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
+var shortUrl = connection.model('shortUrl', shortUrlSchema);
 
-//shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl')
+shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl')
 
 //const shortUrl = connection.model('shortUrl', shortUrlSchema)
 
