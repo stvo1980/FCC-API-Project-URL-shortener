@@ -44,9 +44,8 @@ var shortUrl = connection.model('shortUrl', shortUrlSchema)
 
 var createAndSaveURL = function(newUrl, done) {
   var entryUrl = new shortUrl({
-    url: newUrl
-  })
-  entryUrl.save(function (err, data) {
+    url: newUrl})
+   .save(function (err, data) {
     if(err) return done(err)
     return done(null, data)
   })
@@ -79,17 +78,19 @@ app.post("/api/shorturl/new", function (req, res) {
   
   if (validUrl.isUri(newUrl)) {
     findOneByUrl(newUrl, function(err, data)  {
-      data
-        ? res.json({
+      if(data) {
+         res.json({
             original_url: data.url,
             short_url: data._id
           })
-        : createAndSaveURL(newUrl, function (err, data) {
+      } else {
+        createAndSaveURL(newUrl, function (err, data) {
             res.json({
               original_url: newUrl,
               short_url: data._id
             })
           })
+      }
     })
   } else {
     res.json({error: 'invalid URL'})
