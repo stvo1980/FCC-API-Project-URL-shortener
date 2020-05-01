@@ -38,29 +38,29 @@ var shortUrlSchema = new Schema({
   }
 })
 //this for id package
-shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl')
+shortUrlSchema.plugin(autoIncrement.plugin, 'ShortURL')
 
-const shortUrl = connection.model('shortUrl', shortUrlSchema)
+const ShortUrl = connection.model('ShortUrl', shortUrlSchema)
 
 const createAndSaveURL = (newURL, done) => {
-  const shortUrl = new shortUrl({
+  const entryUrl = new ShortUrl({
     url: newURL
   })
-  shortUrl.save((err, data) => {
+  entryUrl.save((err, data) => {
     if(err) return done(err)
     return done(null, data)
   })
 }
 
 const findOneByURL = (newURL, done) => {
-  shortUrl.findOne({url: newURL}, (err, data) => {
+  ShortUrl.findOne({url: newURL}, (err, data) => {
     if(err) return done(err)
     return done(null, data)
   })
 }
 
-const findURLByShortURL = (shortUrl, done) => {
-  shortUrl.findById(shortUrl, (err, data) => {
+const findURLByShortURL = (shortURL, done) => {
+  ShortUrl.findById(shortURL, (err, data) => {
     if(err) return done(err)
     return done(null, data)
   })
