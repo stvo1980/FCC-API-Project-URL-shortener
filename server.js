@@ -37,16 +37,13 @@ var shortUrlSchema = new Schema({
     required: true
   }
 })
-//this for id package
-//shortUrlSchema.plugin(autoIncrement.plugin, 'ShortURL')
 
-
+//this for id package start with 100 and increment by 1
 
 shortUrlSchema.plugin(autoIncrement.plugin, {
     model: 'shortUrl',
-//   field: 'Id',
     startAt: 100,
-    incrementBy: 100
+    incrementBy: 1
 });
 
 var shortUrl = connection.model('shortUrl', shortUrlSchema);
