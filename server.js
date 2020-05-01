@@ -18,7 +18,7 @@ var port = process.env.PORT || 3000;
 //connect with id incrementor
 var connection = mongoose.createConnection(process.env.MONGO_URI);
 autoIncrement.initialize(connection);
-mongoose.connect(process.env.MONGO_URI); 
+//mongoose.connect(process.env.MONGO_URI); 
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
@@ -40,19 +40,15 @@ var shortUrlSchema = new Schema({
  
 //shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUrl');
 
-//var ShortURL = connection.model('ShortURL', shortUrlSchema)
+var shortUrl = connection.model('shortUrl', shortUrlSchema)
 shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
-var shortUrl = connection.model('shortUrl', shortUrlSchema);
+//var shortUrl = connection.model('shortUrl', shortUrlSchema);
 
 
 
 
 //with this video to get url https://www.youtube.com/watch?v=5T1YDRWaa3k
-app.get("/new/:urlToShort(*)",function(req,res,next){
-        var urlToShort=req.params.urlToShort;  
-  return res.json({urlToShort})
-  console.log(urlToShort)
-        })
+
 // go ahead
 const createAndSaveUrl = (newUrl, done) => {
   const shortUrl = new shortUrl({
