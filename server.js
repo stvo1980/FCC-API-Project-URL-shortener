@@ -38,9 +38,9 @@ var shortUrl = mongoose.model('shortUrl', shortUrlSchema);
 
 
  
-shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUrl');
+//shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUrl');
 
-var shortUrl = connection.model('shortUrl', shortUrlSchema)
+//var shortUrl = connection.model('shortUrl', shortUrlSchema)
 shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
 var shortUrl = connection.model('shortUrl', shortUrlSchema);
 
