@@ -18,7 +18,9 @@ var port = process.env.PORT || 3000;
 /** this project needs a db !! **/ 
 // mongoose.connect(process.env.MONGOLAB_URI);
 
-var connection = mongoose.createConnection(process.env.MONGO_URI)
+var connection = mongoose.createConnection(process.env.MONGO_URI,
+                                           { useUnifiedTopology: true ,
+                                            useNewUrlParser: true} )
 //to work with id package
 autoIncrement.initialize(connection)
 
@@ -71,18 +73,6 @@ var findUrlById = function (shortUrl, done)  {
   })
 }
 
-
-MongoClient.connect(connection, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mydb");
-  dbo.collection("customers").find({}).toArray(function(err, result) {
-    if (err) throw err;
-    console.log(result);
-    db.close();
-  });
-});
-
-
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.get('/', function(req, res){
@@ -120,11 +110,6 @@ app.get('/api/shorturl/:shorturl', function (req, res) {
     res.redirect(data.url)
   })
 })
-
-
-
-
-
 
 app.listen(port, function () {
   console.log('Node.js listening ...');
