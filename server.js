@@ -14,11 +14,11 @@ var autoIncrement = require('mongoose-auto-increment');
 var port = process.env.PORT || 3000;
 
 /** this project needs a db !! **/ 
-// mongoose.connect(process.env.DB_URI);
+ //mongoose.connect(process.env.DB_URI);
 //connect with id incrementor
 var connection = mongoose.createConnection(process.env.MONGO_URI);
 autoIncrement.initialize(connection);
-//mongoose.connect(process.env.MONGO_URI); 
+mongoose.connect(process.env.MONGO_URI); 
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
@@ -34,7 +34,7 @@ var shortUrlSchema = new Schema({
   }
 })
 
-//var shortUrl = mongoose.model('shortUrl', shortUrlSchema);
+var shortUrl = mongoose.model('shortUrl', shortUrlSchema);
 
 
  
@@ -42,7 +42,7 @@ var shortUrlSchema = new Schema({
 
 
 shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
-var shortUrl = connection.model('shortUrl', shortUrlSchema);
+//var shortUrl = connection.model('shortUrl', shortUrlSchema);
 
 //shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl')
 
@@ -50,8 +50,8 @@ var shortUrl = connection.model('shortUrl', shortUrlSchema);
 
 
 // go ahead
-const createUrl = function(newUrl, done){
-  const shortUrl = new shortUrl({
+var createUrl = function(newUrl, done){
+  var shortUrl = new shortUrl({
     url: newUrl
   })
   shortUrl.save((err, data) => {
@@ -60,15 +60,15 @@ const createUrl = function(newUrl, done){
   })
 }
 
-const findOneByUrl = function(newUrl, done) => {
-  shortUrl.findOne({url: newUrl}, (err, data) => {
+var findOneByUrl = function(newUrl, done) {
+  shortUrl.findOne({url: newUrl}, function(err, data) {
     if(err) return done(err)
     return done(null, data)
   })
 }
 
-const findURLByShortURL = (shortUrl, done) => {
-  shortUrl.findById(shortUrl, (err, data) => {
+var findUrlByShortUrl = function(shortUrl, done) {
+  shortUrl.findById(shortUrl, function(err, data) {
     if(err) return done(err)
     return done(null, data)
   })
@@ -89,7 +89,7 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.post("/api/shorturl/new", function (req, res) {
-  const newUrl = req.body.url
+  var newUrl = req.body.url
   
   if (validator.isURL(newUrl)) {
     findOneByUrl(newUrl, (err, data) => {
@@ -110,8 +110,8 @@ app.post("/api/shorturl/new", function (req, res) {
   }
 });
 
-app.get('/api/shorturl/:shorturl', (req, res) => {
-  findURLByShortURL(req.params.shorturl, (err, data) => {
+app.get('/api/shorturl/:shorturl', function(req, res) {
+  findUrlByShortUrl(req.params.shortUrl, function(err, data) {
     res.redirect(data.url)
   })
 })
