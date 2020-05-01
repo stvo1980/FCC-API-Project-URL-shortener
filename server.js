@@ -28,6 +28,7 @@ app.use(cors());
 
 /** this project needs to parse POST bodies **/
 // you should mount the body-parser here
+//I looked at this project as well https://glitch.com/~fcc-api-project-url-shortener-microservice
 app.use(bodyParser.urlencoded({ extended: false }))
 
 /** set up mongoose schema **/
