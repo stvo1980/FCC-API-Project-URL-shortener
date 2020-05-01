@@ -38,29 +38,29 @@ var shortUrlSchema = new Schema({
   }
 })
 //this for id package
-shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUr')
+shortUrlSchema.plugin(autoIncrement.plugin, 'ShortURL')
 
-var ShortUrl = connection.model('ShortUrl', shortUrlSchema)
+var shortUrl = connection.model('shortUrl', shortUrlSchema)
 
-var createAndSaveURL = (newURL, done) => {
-  var entryUrl = new ShortUrl({
-    url: newURL
+var createAndSaveURL = function(newUrl, done) {
+  var entryUrl = new shortUrl({
+    url: newUrl
   })
-  entryUrl.save((err, data) => {
+  entryUrl.save(function (err, data) {
     if(err) return done(err)
     return done(null, data)
   })
 }
 
-var findOneByURL = (newURL, done) => {
-  ShortUrl.findOne({url: newURL}, (err, data) => {
+var findOneByUrl = function (newUrl, done)  {
+  shortUrl.findOne({url: newUrl}, function (err, data) {
     if(err) return done(err)
     return done(null, data)
   })
 }
 
-var findURLByShortURL = (shortURL, done) => {
-  ShortUrl.findById(shortURL, (err, data) => {
+var findUrlByShortUrl = function (shortUrl, done)  {
+  shortUrl.findById(shortUrl, function (err, data)  {
     if(err) return done(err)
     return done(null, data)
   })
@@ -75,18 +75,18 @@ app.get('/', function(req, res){
   
 // your first API endpoint... 
 app.post("/api/shorturl/new", function (req, res) {
-  var newURL = req.body.url
+  var newUrl = req.body.url
   
-  if (validUrl.isUri(newURL)) {
-    findOneByURL(newURL, (err, data) => {
+  if (validUrl.isUri(newUrl)) {
+    findOneByUrl(newUrl, function(err, data)  {
       data
         ? res.json({
             original_url: data.url,
             short_url: data._id
           })
-        : createAndSaveURL(newURL, (err, data) => {
+        : createAndSaveURL(newUrl, function (err, data) {
             res.json({
-              original_url: newURL,
+              original_url: newUrl,
               short_url: data._id
             })
           })
@@ -96,8 +96,8 @@ app.post("/api/shorturl/new", function (req, res) {
   }
 });
 
-app.get('/api/shorturl/:shorturl', (req, res) => {
-  findURLByShortURL(req.params.shorturl, (err, data) => {
+app.get('/api/shorturl/:shorturl', function (req, res) {
+  findUrlByShortUrl(req.params.shorturl, function (err, data) {
     res.redirect(data.url)
   })
 })
