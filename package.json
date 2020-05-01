@@ -14,7 +14,7 @@
 		"body-parser": "^1.19.0",
     "mongoose-auto-increment": "^5.0.1",
     "mongoose-unique-validator": "^2.0.1",
-    "validator": "^10.7.1"
+    "valid-url": "^1.0.9"
 	},
 	"engines": {
 		"node": "10.17.0"

@@ -1,31 +1,35 @@
 'use strict';
 
 var express = require('express');
+var bodyParser = require('body-parser')
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
-var bodyParser = require('body-parser')
-var cors = require('cors');
-var validator = require('validator')
-var app = express();
 //to work with id https://www.npmjs.com/package/mongoose-auto-increment
-var autoIncrement = require('mongoose-auto-increment');
+var autoIncrement = require('mongoose-auto-increment')
+//to check if url is valid https://www.npmjs.com/package/valid-url
+var validUrl = require('valid-url')
+
+var cors = require('cors');
+var app = express();
 
 // Basic Configuration 
 var port = process.env.PORT || 3000;
 
 /** this project needs a db !! **/ 
- //mongoose.connect(process.env.DB_URI);
-//connect with id incrementor
-var connection = mongoose.createConnection(process.env.MONGO_URI);
-autoIncrement.initialize(connection);
-mongoose.connect(process.env.MONGO_URI); 
+// mongoose.connect(process.env.MONGOLAB_URI);
+
+var connection = mongoose.createConnection(process.env.MONGO_URI)
+//to work with id package
+autoIncrement.initialize(connection)
+
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
 // you should mount the body-parser here
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 
-var Schema=mongoose.Schema;
+/** set up mongoose schema **/
+var Schema = mongoose.Schema
 
 var shortUrlSchema = new Schema({
   url: {
@@ -33,25 +37,13 @@ var shortUrlSchema = new Schema({
     required: true
   }
 })
+//this for id package
+shortUrlSchema.plugin(autoIncrement.plugin, 'ShortURL')
 
-var shortUrl = mongoose.model('shortUrl', shortUrlSchema);
+var shortUrl = connection.model('shortUrl', shortUrlSchema)
 
-
- 
-
-
-
-shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
-//var shortUrl = connection.model('shortUrl', shortUrlSchema);
-
-//shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl')
-
-//const shortUrl = connection.model('shortUrl', shortUrlSchema)
-
-
-// go ahead
-var createUrl = function(newUrl, done){
-  var shortUrl = new shortUrl({
+const createAndSaveUrl = (newUrl, done) => {
+  const shortUrl = new shortUrl({
     url: newUrl
   })
   shortUrl.save((err, data) => {
@@ -60,21 +52,19 @@ var createUrl = function(newUrl, done){
   })
 }
 
-var findOneByUrl = function(newUrl, done) {
-  shortUrl.findOne({url: newUrl}, function(err, data) {
+const findOneByUrl = (newUrl, done) => {
+  shortUrl.findOne({url: newUrl}, (err, data) => {
     if(err) return done(err)
     return done(null, data)
   })
 }
 
-var findUrlByShortUrl = function(shortUrl, done) {
-  shortUrl.findById(shortUrl, function(err, data) {
+const findUrlByShortUrl = (shortUrl, done) => {
+  shortUrl.findById(shortUrl, (err, data) => {
     if(err) return done(err)
     return done(null, data)
   })
 }
-
-
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -84,42 +74,33 @@ app.get('/', function(req, res){
 
   
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
-});
-
 app.post("/api/shorturl/new", function (req, res) {
-  var newUrl = req.body.url
+  const newUrl = req.body.url
   
-  if (validator.isURL(newUrl)) {
-    findOneByUrl(newUrl, function(err, data)  {
-      if(data) {
-         res.json({
+  if (validUrl.isUri(newUrl)) {
+    findOneByUrl(newUrl, (err, data) => {
+      data
+        ? res.json({
             original_url: data.url,
             short_url: data._id
           })
-      } else {
-         createUrl(newUrl, (err, data) => {
+        : createAndSaveUrl(newUrl, (err, data) => {
             res.json({
               original_url: newUrl,
               short_url: data._id
             })
           })
-      }
     })
   } else {
     res.json({error: 'invalid URL'})
   }
 });
 
-app.get('/api/shorturl/:shorturl', function(req, res) {
-  findUrlByShortUrl(req.params.shortUrl, function(err, data) {
+app.get('/api/shorturl/:shorturl', (req, res) => {
+  findUrlByShortUrl(req.params.shorturl, (err, data) => {
     res.redirect(data.url)
   })
 })
-
-
-
 
 
 app.listen(port, function () {
