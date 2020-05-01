@@ -48,7 +48,7 @@ shortUrlSchema.plugin(autoIncrement.plugin, {
 
 var shortUrl = connection.model('shortUrl', shortUrlSchema);
 
-var createAndSaveUrl = function(newUrl, done) {
+var createUrl = function(newUrl, done) {
   var entryUrl = new shortUrl({
     url: newUrl})
    .save(function (err, data) {
@@ -57,19 +57,31 @@ var createAndSaveUrl = function(newUrl, done) {
   })
 }
 
-var findOneByUrl = function (newUrl, done)  {
+var findUrl = function (newUrl, done)  {
   shortUrl.findOne({url: newUrl}, function (err, data) {
     if(err) return done(err)
     return done(null, data)
   })
 }
 
-var findUrlByShortUrl = function (shortUrl, done)  {
+var findUrlById = function (shortUrl, done)  {
   shortUrl.findById(shortUrl, function (err, data)  {
     if(err) return done(err)
     return done(null, data)
   })
 }
+
+
+MongoClient.connect(connection, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("mydb");
+  dbo.collection("customers").find({}).toArray(function(err, result) {
+    if (err) throw err;
+    console.log(result);
+    db.close();
+  });
+});
+
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -81,16 +93,16 @@ app.get('/', function(req, res){
 // your first API endpoint... 
 app.post("/api/shorturl/new", function (req, res) {
   var newUrl = req.body.url
-  //see validUrl variable
+  //check if  validUrl variable
   if (validUrl.isUri(newUrl)) {
-    findOneByUrl(newUrl, function(err, data)  {
+    findUrl(newUrl, function(err, data)  {
       if(data) {
          res.json({
             original_url: data.url,
             short_url: data._id
           })
       } else {
-        createAndSaveUrl(newUrl, function (err, data) {
+        createUrl(newUrl, function (err, data) {
             res.json({
               original_url: newUrl,
               short_url: data._id
@@ -104,10 +116,14 @@ app.post("/api/shorturl/new", function (req, res) {
 });
 
 app.get('/api/shorturl/:shorturl', function (req, res) {
-  findUrlByShortUrl(req.params.shorturl, function (err, data) {
+  findUrlById(req.params.shorturl, function (err, data) {
     res.redirect(data.url)
   })
 })
+
+
+
+
 
 
 app.listen(port, function () {
