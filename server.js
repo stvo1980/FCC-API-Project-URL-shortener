@@ -40,11 +40,13 @@ var shortUrlSchema = new Schema({
  
 //shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUrl');
 
-var shortUrl = connection.model('shortUrl', shortUrlSchema)
-shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
+//var shortUrl = connection.model('shortUrl', shortUrlSchema)
+//shortUrlSchema.plugin(autoIncrement.plugin, 'shortUrl');
 //var shortUrl = connection.model('shortUrl', shortUrlSchema);
 
+shortUrlSchema.plugin(autoIncrement.plugin, 'ShortUrl')
 
+const shortUrl = connection.model('ShortUrl', shortUrlSchema)
 
 
 //with this video to get url https://www.youtube.com/watch?v=5T1YDRWaa3k
