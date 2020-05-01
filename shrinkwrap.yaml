@@ -3,7 +3,7 @@ dependencies:
   cors: 2.8.5
   express: 4.17.1
   mongodb: 3.5.7
-  mongoose: 5.9.10
+  mongoose: 5.9.11
   mongoose-auto-increment: 5.0.1
   mongoose-unique-validator: 2.0.3
   validator: 10.11.0
@@ -317,20 +317,6 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
-  /mongodb/3.5.6:
-    dependencies:
-      bl: 2.2.0
-      bson: 1.1.4
-      denque: 1.4.1
-      require_optional: 1.0.1
-      safe-buffer: 5.2.0
-    dev: false
-    engines:
-      node: '>=4'
-    optionalDependencies:
-      saslprep: 1.0.3
-    resolution:
-      integrity: sha512-sh3q3GLDLT4QmoDLamxtAECwC3RGjq+oNuK1ENV8+tnipIavss6sMYt77hpygqlMOCt0Sla5cl7H4SKCVBCGEg==
   /mongodb/3.5.7:
     dependencies:
       bl: 2.2.0
@@ -368,11 +354,11 @@ packages:
       mongoose: ^5.2.1
     resolution:
       integrity: sha512-3/8pmvAC1acBZS6eWKAWQUiZBlARE1wyWtjga4iQ2wDJeOfRlIKmAvTNHSZXKaAf7RCRUd7wh7as6yWAOrjpQg==
-  /mongoose/5.9.10:
+  /mongoose/5.9.11:
     dependencies:
       bson: 1.1.4
       kareem: 2.3.1
-      mongodb: 3.5.6
+      mongodb: 3.5.7
       mongoose-legacy-pluralize: 1.0.2
       mpath: 0.7.0
       mquery: 3.2.2
@@ -385,7 +371,7 @@ packages:
     engines:
       node: '>=4.0.0'
     resolution:
-      integrity: sha512-w1HNukfJzzDLfcI1f79h2Wj4ogVbf+X8hRkyFgqlcjK7OnDlAgahjDMIsT+mCS9jKojrMhjSsZIs9FiRPkLqMg==
+      integrity: sha512-xsPquUEBfJQ/ufT7SI4+qWHml1+HTNra5jQS0RsgCXIMMltCWxn3jeugLiPbyFkKZokMZ+tPy5yEDtLZu5gHeg==
   /mpath/0.7.0:
     dev: false
     engines:
