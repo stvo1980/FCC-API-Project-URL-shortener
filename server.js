@@ -92,18 +92,20 @@ app.post("/api/shorturl/new", function (req, res) {
   var newUrl = req.body.url
   
   if (validator.isURL(newUrl)) {
-    findOneByUrl(newUrl, (err, data) => {
-      data
-        ? res.json({
+    findOneByUrl(newUrl, function(err, data)  {
+      if(data) {
+         res.json({
             original_url: data.url,
             short_url: data._id
           })
-        : createUrl(newUrl, (err, data) => {
+      } else {
+         createUrl(newUrl, (err, data) => {
             res.json({
               original_url: newUrl,
               short_url: data._id
             })
           })
+      }
     })
   } else {
     res.json({error: 'invalid URL'})
